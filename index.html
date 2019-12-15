@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title> weather forcast </title>
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+
+<body>
+  <h2>Interview Assignmen for Settlement Platform/ Web Developer</h2>
+  <h2> Ellie Khalili </h2>
+  <h3>Enter City Name</h3>
+  <input id="city"></input>
+  <button id="getWeatherForcast">Get 5-day Forecast</button>
+  <div class="ShowWeatherForcast"></div>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+
+      $("#getWeatherForcast").click(function() {
+
+        var city = $("#city").val();
+        var key = "ca1796eda4c55ce0adc572edb67fc89c"; // API key from OpenWeatherMap
+
+        //var url = 'https://api.openweathermap.org/data/2.5/forecast?appid='+key+'&q='+city+'&count=2';
+        var url = 'https://api.openweathermap.org/data/2.5/forecast';
+        $.ajax({
+          url: url, //My API Call
+          dataType: 'json',
+          type: 'GET',
+          // Parameters for API Call
+          data: {
+            q: city,
+            appid: key,
+            units: "metric",
+            cnt: "33"
+          },
+          success: function(data) {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const timesToDisplay = [0, 8, 16, 24, 32];
+            let d;
+            let dayName;
+
+            //console.log('Received data:', data); // To do the testing
+            var wf = "";
+            wf += "<h3>" + data.city.name + "</h3>"; // City (displays once)
+            $.each(data.list, function(index, val) {
+              if (timesToDisplay.includes(index)) {
+                d = new Date(data.list[index].dt * 1000);
+                dayName = days[d.getDay()];
+
+
+                wf += "<p>" // Opening paragraph
+                wf += "<b> " + new Date(val.dt * 1000).toDateString() + ":  </b>" // DateTime                      
+                wf += val.main.temp + "&degC" // Temperature converted to celsiuce
+                wf += "<span> | " + val.weather[0].description + "</span>"; // Description
+                wf += "<img src='https://openweathermap.org/img/w/" + val.weather[0].icon + ".png'>" // Icon
+                wf += "</p>" // Closing paragraph
+
+              }
+            });
+
+            $(".ShowWeatherForcast").html(wf);
+          }
+
+        });
+
+      })
+
+    });
+  </script>
+
+</body>
+
+</html>
